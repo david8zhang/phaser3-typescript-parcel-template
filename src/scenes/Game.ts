@@ -1,34 +1,30 @@
 import Phaser from 'phaser'
+import { Ball } from '~/core/Ball'
+import { Hoop } from '~/core/Hoop'
+import { Player } from '~/core/Player'
+import { Constants } from '~/utils/Constants'
 
 export default class Game extends Phaser.Scene {
+  private player!: Player
+  private hoop!: Hoop
+  private ball!: Ball
+
   constructor() {
     super('game')
   }
-  preload() {
-    this.load.setBaseURL('http://labs.phaser.io')
-
-    this.load.image('sky', 'assets/skies/space3.png')
-    this.load.image('logo', 'assets/sprites/phaser3-logo.png')
-    this.load.image('red', 'assets/particles/red.png')
-  }
 
   create() {
-    this.add.image(400, 300, 'sky')
-
-    const particles = this.add.particles('red')
-
-    const emitter = particles.createEmitter({
-      speed: 100,
-      scale: { start: 1, end: 0 },
-      blendMode: 'ADD',
+    this.player = new Player(this)
+    this.hoop = new Hoop(this)
+    this.ball = new Ball(this, {
+      position: {
+        x: Constants.GAME_WIDTH / 2,
+        y: Constants.GAME_HEIGHT / 2,
+      },
     })
+  }
 
-    const logo = this.physics.add.image(400, 100, 'logo')
-
-    logo.setVelocity(100, 200)
-    logo.setBounce(1, 1)
-    logo.setCollideWorldBounds(true)
-
-    emitter.startFollow(logo)
+  update() {
+    this.player.update()
   }
 }
